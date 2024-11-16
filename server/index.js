@@ -12,6 +12,10 @@ app.use(express.json());
 app.use(cors());
 const port = 5000;
 
+app.get('/health', (req, res) => {
+  res.status(200).send('Backend is up and running');
+});
+
 // available routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/courses", require("./routes/course"));

@@ -68,42 +68,22 @@ pipeline {
         }
     }
     post {
-    success {
-        // Actions on successful build and tests
-        echo 'Web app is up and running!'
-    }
-    failure {
-        // Actions on failure
-        echo 'Web app is not up, please check the logs.'
-    }
-    always {
-        // Clean up actions
-        echo 'Cleaning up...'
-        
-        // Check if containers exist before stopping and removing
-        script {
-            def frontendExists = sh(script: "docker ps -q -f name=frontend", returnStdout: true).trim()
-            def backendExists = sh(script: "docker ps -q -f name=backend", returnStdout: true).trim()
-
-            if (frontendExists) {
-                echo 'Stopping frontend container...'
-                sh 'docker stop frontend'
-                sh 'docker rm frontend'
-            } else {
-                echo 'Frontend container not found, skipping stop and remove.'
-            }
-
-            if (backendExists) {
-                echo 'Stopping backend container...'
-                sh 'docker stop backend'
-                sh 'docker rm backend'
-            } else {
-                echo 'Backend container not found, skipping stop and remove.'
-            }
-
+        success {
+            // Actions on successful build and tests
+            echo 'Web app is up and running!'
+        }
+        failure {
+            // Actions on failure
+            echo 'Web app is not up, please check the logs.'
+        }
+        always {
+            // Clean up actions
+            echo 'Cleaning up...'
+            // Stop and remove containers after the test
+            sh 'docker stop frontend backend'
+            sh 'docker rm frontend backend'
             // Optionally remove Docker images
-            sh 'docker rmi my-frontend my-backend || true'
+            sh 'docker rmi my-frontend my-backend'
         }
     }
-}
 }

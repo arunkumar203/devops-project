@@ -15,18 +15,24 @@ pipeline {
                     branch: 'main'
             }
         }
-        stage('Run Application') {
+        stage('Build Docker Images') {
             steps {
-                // Start both the frontend and backend (in background)
                 script {
-                    // Start backend server with node index.js
-                    echo 'Starting backend server...'
-                    sh 'cd server &&  node index.js &'
-
-                    // Start frontend server
-                    echo 'Starting frontend server...'
-                    sh 'cd client &&  npm start &'
-
+                    // Build Docker images for both frontend and backend
+                    echo 'Building Docker images for frontend and backend...'
+                    sh 'docker build -t my-frontend ./client'
+                    sh 'docker build -t my-backend ./server'
+                }
+            }
+        }
+        stage('Run Docker Containers') {
+            steps {
+                script {
+                    // Start both frontend and backend Docker containers
+                    echo 'Starting frontend and backend Docker containers...'
+                    sh 'docker run -d -p 3000:3000 --name frontend my-frontend'
+                    sh 'docker run -d -p 5000:5000 --name backend my-backend'
+                    
                     // Wait for a few seconds to ensure the app is up
                     sleep 10
                 }
@@ -73,7 +79,11 @@ pipeline {
         always {
             // Clean up actions
             echo 'Cleaning up...'
+            // Stop and remove containers after the test
+            sh 'docker stop frontend backend'
+            sh 'docker rm frontend backend'
+            // Optionally remove Docker images
+            sh 'docker rmi my-frontend my-backend'
         }
     }
 }
-

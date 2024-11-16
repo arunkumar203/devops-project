@@ -9,24 +9,7 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    // Install Node.js dependencies for both backend and frontend
-                    sh '''
-                        # Navigate to server and install dependencies
-                        cd server
-                        npm install
-                        cd ..
 
-                        # Navigate to client and install dependencies
-                        cd client
-                        npm install
-                        cd ..
-                    '''
-                }
-            }
-        }
 
         stage('Build Docker Images') {
             steps {

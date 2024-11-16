@@ -40,8 +40,7 @@ pipeline {
                         # Wait for services to start
                         sleep 10
 
-                        # Test backend API (replace /api/health with your endpoint)
-                       # curl -f http://localhost:3000/api/health || (echo "Backend health check failed!" && exit 1)
+                       
 
                         # Test frontend availability
                         curl -f http://localhost:5000 || (echo "Frontend health check failed!" && exit 1)

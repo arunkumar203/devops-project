@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         FRONTEND_URL = 'http://localhost:3000'  // Frontend URL
-        BACKEND_URL = 'http://localhost:5000'   // Backend URL
+        BACKEND_URL = 'http://localhost:5000/health'   // Backend URL
     }
     stages {
         stage('Checkout') {

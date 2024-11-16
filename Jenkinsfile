@@ -20,8 +20,7 @@ pipeline {
                 script {
                     // Build Docker images for both frontend and backend
                     echo 'Building Docker images for frontend and backend...'
-                    sh 'docker build -t my-frontend ./client'
-                    sh 'docker build -t my-backend ./server'
+                    
                 }
             }
         }
@@ -30,8 +29,7 @@ pipeline {
                 script {
                     // Start both frontend and backend Docker containers
                     echo 'Starting frontend and backend Docker containers...'
-                    sh 'docker run -d -p 3000:3000 --name frontend my-frontend'
-                    sh 'docker run -d -p 5000:5000 --name backend my-backend'
+                   
                     
                     // Wait for a few seconds to ensure the app is up
                     sleep 10

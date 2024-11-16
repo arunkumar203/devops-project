@@ -6,8 +6,8 @@ pipeline {
     environment {
         FRONTEND_URL = 'http://localhost:3000'  // Frontend URL
         BACKEND_URL = 'http://localhost:5000/health'  // Backend URL
-        DOCKER_HUB_REPO_FRONTEND = 'your_dockerhub_username/my-frontend'  // Docker Hub repo for frontend
-        DOCKER_HUB_REPO_BACKEND = 'your_dockerhub_username/my-backend'  // Docker Hub repo for backend
+        DOCKER_HUB_REPO_FRONTEND = 'sarankumar2727/my-frontend'  // Docker Hub repo for frontend
+        DOCKER_HUB_REPO_BACKEND = 'sarankumar2727/my-backend'  // Docker Hub repo for backend
     }
     stages {
         stage('Checkout') {

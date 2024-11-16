@@ -1,0 +1,24 @@
+// public/data.json
+{
+    "courses": [
+      {
+        "courseId": 1,
+        "title": "Introduction to Programming",
+        "description": "Learn the basics of programming in Python.",
+        "semester": "Spring",
+        "instructor": "Dr. Jane Doe",
+        "enrolledList": [],
+        "image": "https://via.placeholder.com/150"
+      },
+      {
+        "courseId": 2,
+        "title": "Data Structures and Algorithms",
+        "description": "Explore fundamental data structures and algorithms in C++.",
+        "semester": "Fall",
+        "instructor": "Prof. John Smith",
+        "enrolledList": [],
+        "image": "https://via.placeholder.com/150"
+      }
+    ]
+  }
+  

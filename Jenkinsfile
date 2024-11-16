@@ -21,6 +21,11 @@ pipeline {
                     // Build Docker images for both frontend and backend
                     echo 'Building Docker images for frontend and backend...'
                     
+                    // Build the frontend Docker image
+                    sh 'docker build -t my-frontend ./client'
+                    
+                    // Build the backend Docker image
+                    sh 'docker build -t my-backend ./server'
                 }
             }
         }
@@ -29,7 +34,8 @@ pipeline {
                 script {
                     // Start both frontend and backend Docker containers
                     echo 'Starting frontend and backend Docker containers...'
-                   
+                    sh 'docker run -d -p 3000:3000 --name frontend my-frontend'
+                    sh 'docker run -d -p 5000:5000 --name backend my-backend'
                     
                     // Wait for a few seconds to ensure the app is up
                     sleep 10
@@ -80,10 +86,12 @@ pipeline {
             // Stop and remove containers after the test
             script {
                 try {
+                    // Stop containers and remove them
                     sh 'docker stop frontend || true'  // Ignore error if container does not exist
                     sh 'docker stop backend || true'   // Ignore error if container does not exist
                     sh 'docker rm frontend || true'    // Ignore error if container does not exist
                     sh 'docker rm backend || true'     // Ignore error if container does not exist
+                    
                     // Optionally remove Docker images
                     sh 'docker rmi my-frontend my-backend || true' // Ignore error if image does not exist
                 } catch (e) {

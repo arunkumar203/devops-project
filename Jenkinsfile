@@ -1,77 +1,79 @@
 pipeline {
     agent any
-
+    tools {
+        nodejs 'NodeJS'  // Name of your NodeJS installation in Jenkins
+    }
+    environment {
+        FRONTEND_URL = 'http://localhost:3000'  // Frontend URL
+        BACKEND_URL = 'http://localhost:5000'   // Backend URL
+    }
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the repository
-                checkout scm
+                // Checkout the code from GitHub
+                git url: 'https://github.com/your-repo/your-project.git',
+                    branch: 'main'
             }
         }
-
-
-
-        stage('Build Docker Images') {
+        stage('Run Application') {
             steps {
+                // Start both the frontend and backend (in background)
                 script {
-                    // Build Docker images for backend and frontend
-                    sh '''
-                        # Build backend image
-                        docker build -t project-backend ./server
+                    // Start backend server with node index.js
+                    echo 'Starting backend server...'
+                    sh 'cd backend && nohup node index.js &'
 
-                        # Build frontend image
-                        docker build -t project-frontend ./client
-                    '''
+                    // Start frontend server
+                    echo 'Starting frontend server...'
+                    sh 'cd frontend && nohup npm start &'
+
+                    // Wait for a few seconds to ensure the app is up
+                    sleep 10
                 }
             }
         }
-
-        stage('Run Tests') {
+        stage('Health Check - Frontend') {
             steps {
+                // Check if frontend is up and running
                 script {
-                    // Run backend and frontend containers for testing
-                    sh '''
-                        # Start backend container
-                        docker run -d -p 3000:3000 --name test-backend project-backend
-
-                        # Start frontend container
-                        docker run -d -p 5000:5000 --name test-frontend project-frontend
-
-                        # Wait for services to start
-                        sleep 10
-
-                       
-
-                        # Test frontend availability
-                        curl -f http://localhost:5000 || (echo "Frontend health check failed!" && exit 1)
-
-                        # Stop and remove containers
-                        docker stop test-backend test-frontend
-                        docker rm test-backend test-frontend
-                    '''
+                    echo 'Checking frontend health...'
+                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${FRONTEND_URL}", returnStdout: true).trim()
+                    if (response != '200') {
+                        error "Frontend is not responding correctly, received status code: ${response}"
+                    } else {
+                        echo "Frontend is up and running with status code: ${response}"
+                    }
                 }
             }
         }
-
-        stage('Cleanup') {
+        stage('Health Check - Backend') {
             steps {
+                // Check if backend is up and running
                 script {
-                    // Remove Docker images after testing
-                    sh '''
-                        docker rmi project-backend
-                        docker rmi project-frontend
-                    '''
+                    echo 'Checking backend health...'
+                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${BACKEND_URL}", returnStdout: true).trim()
+                    if (response != '200') {
+                        error "Backend is not responding correctly, received status code: ${response}"
+                    } else {
+                        echo "Backend is up and running with status code: ${response}"
+                    }
                 }
             }
         }
     }
-
     post {
         success {
-            echo 'Build, tests, and cleanup completed successfully!'
+            // Actions on successful build and tests
+            echo 'Web app is up and running!'
         }
         failure {
-            echo 'Build, tests, or cleanup failed.'
+            // Actions on failure
+            echo 'Web app is not up, please check the logs.'
+        }
+        always {
+            // Clean up actions
+            echo 'Cleaning up...'
         }
     }
 }
+

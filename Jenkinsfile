@@ -21,11 +21,11 @@ pipeline {
                 script {
                     // Start backend server with node index.js
                     echo 'Starting backend server...'
-                    sh 'cd backend && nohup node index.js &'
+                    sh 'cd server && nohup node index.js &'
 
                     // Start frontend server
                     echo 'Starting frontend server...'
-                    sh 'cd frontend && nohup npm start &'
+                    sh 'cd client && nohup npm start &'
 
                     // Wait for a few seconds to ensure the app is up
                     sleep 10

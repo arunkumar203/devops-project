@@ -7,7 +7,7 @@ import Login from './Components/Auth/Login';
 import SignUp from './Components/Auth/SignUp';
 import CourseForm from './Components/Course/CourseForm';
 import axios from 'axios';
-
+let number = 5000;
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('localhost:3000/api/courses');
+        const response = await axios.get('localhost:{number}/api/courses');
         setCourses(response.data);
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -60,7 +60,7 @@ function App() {
 
   const handleCreateCourse = async (newCourse) => {
     try {
-      const response = await axios.post('http:localhost:3000/api/courses/create', newCourse);
+      const response = await axios.post('http:localhost:{number}/api/courses/create', newCourse);
       setCourses((prevCourses) => [...prevCourses, response.data.course]);
       setView('home');
     } catch (error) {
@@ -70,7 +70,7 @@ function App() {
 
   const handleEditCourse = async (updatedCourse) => {
     try {
-      const response = await axios.put(`http:localhost:3000/api/courses/${updatedCourse.courseid}`, updatedCourse);
+      const response = await axios.put(`http:localhost:{number}/api/courses/${updatedCourse.courseid}`, updatedCourse);
       setCourses((prevCourses) =>
         prevCourses.map((course) =>
           course.courseid === updatedCourse.courseid ? response.data.course : course
@@ -90,7 +90,7 @@ function App() {
     }
     console.log(courseId)
     try {
-      const response = await axios.post(`http:localhost:3000/api/courses/enroll/${courseId}`,{userId},
+      const response = await axios.post(`http:localhost:{number}/api/courses/enroll/${courseId}`,{userId},
         { headers: { "auth-token": localStorage.getItem('token') } }
       );
       setCourses((prevCourses) =>
@@ -110,7 +110,7 @@ function App() {
     }
 
     try {
-      const response = await axios.post(`http:localhost:3000/api/courses/unenroll/${courseId}`, { userId });
+      const response = await axios.post(`http:localhost:{number}/api/courses/unenroll/${courseId}`, { userId });
       setCourses((prevCourses) =>
         prevCourses.map((course) =>
           course.courseid === courseId ? response.data.course : course

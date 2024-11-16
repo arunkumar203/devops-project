@@ -80,10 +80,18 @@ pipeline {
             // Clean up actions
             echo 'Cleaning up...'
             // Stop and remove containers after the test
-            sh 'docker stop frontend backend'
-            sh 'docker rm frontend backend'
-            // Optionally remove Docker images
-            sh 'docker rmi my-frontend my-backend'
+            script {
+                try {
+                    sh 'docker stop frontend || true'  // Ignore error if container does not exist
+                    sh 'docker stop backend || true'   // Ignore error if container does not exist
+                    sh 'docker rm frontend || true'    // Ignore error if container does not exist
+                    sh 'docker rm backend || true'     // Ignore error if container does not exist
+                    // Optionally remove Docker images
+                    sh 'docker rmi my-frontend my-backend || true' // Ignore error if image does not exist
+                } catch (e) {
+                    echo "Cleanup failed: ${e.getMessage()}"
+                }
+            }
         }
     }
 }
